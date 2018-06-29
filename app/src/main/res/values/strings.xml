@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">유어캠퍼스맵</string>
+    <string name="kakao_app_key">2efc601663153902e3430179bac843f1</string>
+    <string name="title_activity_maps">Map</string>
+</resources>
