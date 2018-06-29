@@ -246,7 +246,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    public class PostTask extends AsyncTask<Void, Void, String> {
+    public class spotPostTask extends AsyncTask<Void, Void, String> {
 
         private String url;
         private Map<String,String> json_body;
