@@ -78,7 +78,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         Log.d(TAG, "onCreate");
-
+        startActivity(new Intent(MainActivity.this, BarActivity.class));
 
 
         findViewById(R.id.Testbutton).setOnClickListener(
