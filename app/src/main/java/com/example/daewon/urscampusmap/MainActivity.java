@@ -4,14 +4,20 @@ import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -32,6 +38,24 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.gson.JsonArray;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -259,6 +283,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
 
+
     @Override
     protected void onStart() {
         mGoogleApiClient.connect();
@@ -382,4 +407,107 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             startActivity(intent);
         }
     }
+
+
+    public class spotPostTask extends AsyncTask<Void, Void, String> {
+
+        private String url;
+        private Map<String,String> json_body;
+        private Bitmap picture;
+
+
+        public spotPostTask(Map<String,String> body, Bitmap picture) {
+
+            this.json_body = body;
+            this.picture = picture;
+
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            MultipartUtility multipart = null;
+
+            File filesDir = getApplication().getApplicationContext().getFilesDir();
+            File loading_file = new File(filesDir, "cache" + ".jpg");
+
+            OutputStream os;
+            try {
+                os = new FileOutputStream(loading_file);
+                this.picture.compress(Bitmap.CompressFormat.JPEG, 100, os);
+                os.flush();
+                os.close();
+                multipart = new MultipartUtility("http://172.16.17.14:8000/api/spots/", "UTF-8");
+                multipart.addFormField("university",this.json_body.get("university"));
+                multipart.addFormField("addr_x",this.json_body.get("addr_x"));
+                multipart.addFormField("addr_y",this.json_body.get("addr_y"));
+                multipart.addFormField("category",this.json_body.get("category"));
+                multipart.addFormField("title",this.json_body.get("title"));
+                multipart.addFormField("comment",this.json_body.get("comment"));
+                multipart.addFilePart("picture",loading_file);
+                List<String> response = multipart.finish();
+                return response.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return "false";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            System.out.println("-----------------------------------");
+            System.out.println(s);
+            System.out.println("-----------------------------------");
+
+            super.onPostExecute(s);
+
+
+        }
+    }
+
+    public class StoryPostTask extends AsyncTask<Void, Void, String> {
+
+        private String content;
+        private int spot_id;
+
+        public StoryPostTask(int spot_id, String content) {
+
+            this.spot_id = spot_id;
+            this.content = content;
+
+        }
+
+
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+
+            try {
+                ;
+                MultipartUtility multipart = new MultipartUtility("http://172.16.17.14:8000/api/stories/", "UTF-8");
+                multipart.addFormField("spot",String.valueOf(this.spot_id));
+                multipart.addFormField("content",this.content);
+
+                List<String> responses = multipart.finish();
+                return responses.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return "false";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            System.out.println("-----------------------------------");
+            System.out.println(s);
+            System.out.println("-----------------------------------");
+
+            super.onPostExecute(s);
+
+
+        }
+    }
+
+
 }
