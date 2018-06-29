@@ -164,6 +164,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
+    }
 
     @Override
     protected void onStart() {
@@ -238,6 +239,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         NetworkTask networkTask = new NetworkTask(api_url+"spots/", null);
         networkTask.execute();
     }
+
 
     public class NetworkTask extends AsyncTask<Void, Void, String> {
 
