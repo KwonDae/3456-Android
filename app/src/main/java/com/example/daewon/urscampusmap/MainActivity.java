@@ -343,6 +343,49 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    public class StoryPostTask extends AsyncTask<Void, Void, String> {
+
+        private String content;
+        private int spot_id;
+
+        public StoryPostTask(int spot_id, String content) {
+
+            this.spot_id = spot_id;
+            this.content = content;
+
+        }
+
+
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+
+            try {
+                ;
+                MultipartUtility multipart = new MultipartUtility("http://172.16.17.14:8000/api/stories/", "UTF-8");
+                multipart.addFormField("spot",String.valueOf(this.spot_id));
+                multipart.addFormField("content",this.content);
+
+                List<String> responses = multipart.finish();
+                return responses.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return "false";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            System.out.println("-----------------------------------");
+            System.out.println(s);
+            System.out.println("-----------------------------------");
+
+            super.onPostExecute(s);
+
+
+        }
+    }
 
 
 }
