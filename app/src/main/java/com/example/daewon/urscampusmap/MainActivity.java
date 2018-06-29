@@ -71,9 +71,84 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_main);
 
 
-        drink = findViewById(R.id.drink);
+
         place = findViewById(R.id.place);
 
+        findViewById(R.id.place).setOnClickListener(
+                new Button.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            JSONArray data = jsonObject.getJSONArray("results");
+                            int list_cnt = jsonObject.getInt("count");
+                            Double[] latitude = new Double[data.length()];
+                            Double[] logitude = new Double[data.length()];
+                            int[] id = new int[data.length()];
+                            String[] name = new String[data.length()];
+                            System.out.println(data.length());
+                            for(int i=0; i < data.length(); i++) {
+                                JSONObject object = data.getJSONObject(i);
+                                String type = object.getString("categoty");
+                                if( type.equals("H")) {
+                                    latitude[i] = object.getDouble("addr_y");
+                                    logitude[i] = object.getDouble("addr_x");
+                                    id[i] = object.getInt("id");
+                                    name[i] = object.getString("title");
+                                }
+                            }
+                            for(int i =0; i< data.length(); i++) {
+                                MarkerOptions markerOptions = new MarkerOptions();
+                                markerOptions
+                                        .position(new LatLng(latitude[i],logitude[i]))
+                                        .title(name[i]);
+                                mMap.addMarker(markerOptions);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        );
+
+        findViewById(R.id.drink).setOnClickListener(
+                new Button.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            JSONArray data = jsonObject.getJSONArray("results");
+                            int list_cnt = jsonObject.getInt("count");
+                            Double[] latitude = new Double[data.length()];
+                            Double[] logitude = new Double[data.length()];
+                            int[] id = new int[data.length()];
+                            String[] name = new String[data.length()];
+                            System.out.println(data.length());
+                            for(int i=0; i < data.length(); i++) {
+                                JSONObject object = data.getJSONObject(i);
+                                String type = object.getString("categoty");
+                                if( type.equals("P")) {
+                                    latitude[i] = object.getDouble("addr_y");
+                                    logitude[i] = object.getDouble("addr_x");
+                                    id[i] = object.getInt("id");
+                                    name[i] = object.getString("title");
+                                }
+                            }
+                            for(int i =0; i< data.length(); i++) {
+                                MarkerOptions markerOptions = new MarkerOptions();
+                                markerOptions
+                                        .position(new LatLng(latitude[i],logitude[i]))
+                                        .title(name[i]);
+                                mMap.addMarker(markerOptions);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+        );
         findViewById(R.id.restaurant).setOnClickListener(
                 new Button.OnClickListener() {
 
@@ -90,10 +165,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             System.out.println(data.length());
                             for(int i=0; i < data.length(); i++) {
                                 JSONObject object = data.getJSONObject(i);
-                                latitude[i] = object.getDouble("addr_y");
-                                logitude[i] = object.getDouble("addr_x");
-                                id[i] = object.getInt("id");
-                                name[i] = object.getString("title");
+                                String type = object.getString("categoty");
+                                if( type.equals("R")) {
+                                    latitude[i] = object.getDouble("addr_y");
+                                    logitude[i] = object.getDouble("addr_x");
+                                    id[i] = object.getInt("id");
+                                    name[i] = object.getString("title");
+                                }
                             }
                             for(int i =0; i< data.length(); i++) {
                                 MarkerOptions markerOptions = new MarkerOptions();
@@ -124,10 +202,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             System.out.println(data.length());
                             for(int i=0; i < data.length(); i++) {
                                 JSONObject object = data.getJSONObject(i);
-                                latitude[i] = object.getDouble("addr_y");
-                                logitude[i] = object.getDouble("addr_x");
-                                id[i] = object.getInt("id");
-                                name[i] = object.getString("title");
+                                String type = object.getString("categoty");
+                                if( type.equals("C")) {
+                                    latitude[i] = object.getDouble("addr_y");
+                                    logitude[i] = object.getDouble("addr_x");
+                                    id[i] = object.getInt("id");
+                                    name[i] = object.getString("title");
+                                }
                             }
                             for(int i =0; i< data.length(); i++) {
                                 MarkerOptions markerOptions = new MarkerOptions();
@@ -164,7 +245,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    }
+
 
     @Override
     protected void onStart() {
@@ -269,6 +350,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             super.onPostExecute(s);
 
+        }
+
+        public void GoChoice(View view)
+        {
+            Intent intent = new Intent(MainActivity.this, BarActivity.class);
+            startActivity(intent);
         }
     }
 }

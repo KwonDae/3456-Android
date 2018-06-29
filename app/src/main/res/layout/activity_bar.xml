@@ -6,9 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--<ScrollView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
         <android.support.constraint.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -16,7 +16,7 @@
             <Button
                 android:id="@+id/Breserve"
                 android:layout_width="wrap_content"
-                android:layout_height="44dp"
+                android:layout_height="100dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/result"
@@ -26,6 +26,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="1.0" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+
+                />
 
             <CheckBox
                 android:id="@+id/Bcheckbox7"
@@ -213,11 +220,11 @@
             <CheckBox
                 android:id="@+id/BcheckBox1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="400dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginStart="48dp"
                 android:layout_marginTop="8dp"
-                android:background="@android:color/transparent"
+                android:background="@android:color/black"
                 android:button="@null"
                 android:checked="false"
                 android:drawableLeft="@drawable/bcheckbox1"
@@ -226,5 +233,5 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.409" />
         </android.support.constraint.ConstraintLayout>
-    <!--</ScrollView>-->
+    </ScrollView>
 </android.support.constraint.ConstraintLayout>
