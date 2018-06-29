@@ -253,7 +253,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         private Bitmap picture;
 
 
-        public PostTask(Map<String,String> body, Bitmap picture) {
+        public spotPostTask(Map<String,String> body, Bitmap picture) {
 
             this.json_body = body;
             this.picture = picture;
