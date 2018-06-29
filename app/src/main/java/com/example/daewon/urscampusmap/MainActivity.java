@@ -4,14 +4,20 @@ import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -31,6 +37,24 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.gson.JsonArray;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
 
@@ -85,8 +109,44 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         new Button.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                NetworkTask networkTask = new NetworkTask(api_url+"spots/", null);
-                                networkTask.execute();
+
+//                                RequestBody descBody = RequestBody.create(MediaType.parse("text/plain"), "1");
+
+                                PostTask postTask = new PostTask("");
+                                postTask.execute();
+
+
+//                                Retrofit retrofit = new Retrofit.Builder()
+//                                        .baseUrl("http://172.16.17.14:8000/api/")
+//                                        .addConverterFactory(GsonConverterFactory.create())
+//                                        .build();
+//                                File logo_file = new File("res/drawable/loading.png");
+//                                final String basicAuth = "Basic " + Base64.encodeToString("jara@example.com:jarajara".getBytes(), Base64.NO_WRAP);
+//
+//                                Map<String, RequestBody> map = new HashMap<>();
+//                                map.put("university", toRequestBody("1")); // 유저아이디값(string)
+//                                map.put("addr_x", toRequestBody("127.34678")); // 유저아이디값(string)
+//                                map.put("addr_y", toRequestBody("36.387777")); // 유저아이디값(string)
+//                                map.put("category", toRequestBody("CD")); // 유저아이디값(string)
+//                                map.put("title", toRequestBody("someone Idk")); // 유저아이디값(string)
+//                                map.put("comment", toRequestBody("classic agizagi")); // 유저아이디값(string)
+//                                map.put("url_upload\"; filename=\"photo.png\"", RequestBody.create(MediaType.parse("image/png"), logo_file));
+//                                SpotService service = retrofit.create(SpotService.class);
+//                                Call<Spot> spots = service.createSpot(basicAuth,map);
+//                                spots.enqueue(new Callback<Spot>(){
+//                                    @Override
+//                                    public void onResponse(Call<Spot> call, Response<Spot> response) {
+//                                        // Code...
+//                                        System.out.println("------------success----------------");
+//                                    }
+//                                    @Override
+//                                    public void onFailure(Call<Spot> call, Throwable t) {
+//                                        // Code...
+//                                        System.out.println("------------failure----------------");
+//
+//                                    }
+//                                });
+
                             }
                         }
         );
@@ -109,6 +169,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     }
+
 
     @Override
     protected void onStart() {
@@ -135,6 +196,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    public RequestBody toRequestBody(String value)
+    {
+        return RequestBody.create(MediaType.parse("text/plain"), "1");
     }
 
     public void onLastLocationButtonClicked(View view) {
@@ -178,10 +244,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-
     }
-
 
     public class NetworkTask extends AsyncTask<Void, Void, String> {
 
@@ -217,4 +280,69 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
     }
+
+
+    public class PostTask extends AsyncTask<Void, Void, String> {
+
+        private String url;
+
+        public PostTask(String url) {
+
+            this.url = url;
+
+        }
+
+
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            MultipartUtility multipart = null;
+            Resources res =  getApplication().getApplicationContext().getResources();
+
+
+            Bitmap testImg = BitmapFactory.decodeResource(res, R.drawable.loading);
+
+            File filesDir = getApplication().getApplicationContext().getFilesDir();
+            File loading_file = new File(filesDir, "loa" + ".jpg");
+
+            OutputStream os;
+            try {
+                os = new FileOutputStream(loading_file);
+                testImg.compress(Bitmap.CompressFormat.JPEG, 100, os);
+                os.flush();
+                os.close();
+                multipart = new MultipartUtility("http://172.16.17.14:8000/api/spots/", "UTF-8");
+                multipart.addFormField("university","1");
+                multipart.addFormField("addr_x","127.34678");
+                multipart.addFormField("addr_y","36.87777");
+                multipart.addFormField("category","C");
+                multipart.addFormField("title","something IDK");
+                multipart.addFormField("comment","classic arigari");
+                multipart.addFilePart("picture",loading_file);
+                List<String> response = multipart.finish();
+                System.out.println(response);
+                List<String> responses = multipart.finish();
+                System.out.println(responses);
+                return responses.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return "false";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            System.out.println("-----------------------------------");
+            System.out.println(s);
+            System.out.println("-----------------------------------");
+
+            super.onPostExecute(s);
+
+
+        }
+    }
+
+
+
 }
