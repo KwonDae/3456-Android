@@ -38,7 +38,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.gson.JsonArray;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -49,13 +48,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -331,7 +323,40 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         @Override
                         public void onInfoWindowClick(Marker marker) {
                             String title = marker.getTitle();
-                            System.out.println(title);
+                            String thumbnail,comment,type=null;
+                            Intent intent=null;
+                            try {
+                                JSONObject jsonObject = new JSONObject(result);
+                                JSONArray data = jsonObject.getJSONArray("results");
+                                for(int i=0; i < data.length(); i++) {
+                                    JSONObject object = data.getJSONObject(i);
+                                    String temp = object.getString("title");
+                                    if( title.equals(temp)) {
+                                        thumbnail = object.getString("picture_thumbnail");
+                                        comment = object.getString("comment");
+                                        type = object.getString("category");
+                                        break;
+                                    }
+                                }
+                                if(type.equals("R")) {
+                                    intent = new Intent(MainActivity.this, RestaurantActivity.class);
+                                }
+                                else if(type.equals("C")){
+                                    intent = new Intent(MainActivity.this, CafeActivity.class);
+                                }
+                                else if( type.equals("P")) {
+                                    intent = new Intent(MainActivity.this, BarActivity.class);
+                                }
+                                else if( type.equals("H")) {
+                                    intent = new Intent(MainActivity.this, HiddenSpotActivity.class);
+                                }
+
+                                startActivity(intent);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
                         }
                     });
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
@@ -484,7 +509,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
             try {
-                ;
+
                 MultipartUtility multipart = new MultipartUtility("http://172.16.17.14:8000/api/stories/", "UTF-8");
                 multipart.addFormField("spot",String.valueOf(this.spot_id));
                 multipart.addFormField("content",this.content);

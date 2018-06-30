@@ -33,12 +33,15 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".BarActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".RestaurantActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".CafeActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
