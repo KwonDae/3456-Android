@@ -4,15 +4,20 @@ import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -26,22 +31,28 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.gson.JsonArray;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
 
@@ -84,7 +95,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 new Button.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
+                        mMap.clear();
                         try {
                             JSONObject jsonObject = new JSONObject(result);
                             JSONArray data = jsonObject.getJSONArray("results");
@@ -96,7 +107,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             System.out.println(data.length());
                             for(int i=0; i < data.length(); i++) {
                                 JSONObject object = data.getJSONObject(i);
-                                String type = object.getString("categoty");
+                                String type = object.getString("category");
                                 if( type.equals("H")) {
                                     latitude[i] = object.getDouble("addr_y");
                                     logitude[i] = object.getDouble("addr_x");
@@ -104,12 +115,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     name[i] = object.getString("title");
                                 }
                             }
-                            for(int i =0; i< data.length(); i++) {
-                                MarkerOptions markerOptions = new MarkerOptions();
-                                markerOptions
-                                        .position(new LatLng(latitude[i],logitude[i]))
-                                        .title(name[i]);
-                                mMap.addMarker(markerOptions);
+                            for(int i =0; i< latitude.length; i++) {
+                                if(latitude[i] != null ) {
+                                    MarkerOptions markerOptions = new MarkerOptions();
+                                    markerOptions
+                                            .position(new LatLng(latitude[i], logitude[i]))
+                                            .title(name[i]);
+                                    mMap.addMarker(markerOptions);
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -122,6 +135,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 new Button.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        mMap.clear();
                         try {
                             JSONObject jsonObject = new JSONObject(result);
                             JSONArray data = jsonObject.getJSONArray("results");
@@ -133,7 +147,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             System.out.println(data.length());
                             for(int i=0; i < data.length(); i++) {
                                 JSONObject object = data.getJSONObject(i);
-                                String type = object.getString("categoty");
+                                String type = object.getString("category");
                                 if( type.equals("P")) {
                                     latitude[i] = object.getDouble("addr_y");
                                     logitude[i] = object.getDouble("addr_x");
@@ -141,12 +155,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     name[i] = object.getString("title");
                                 }
                             }
-                            for(int i =0; i< data.length(); i++) {
-                                MarkerOptions markerOptions = new MarkerOptions();
-                                markerOptions
-                                        .position(new LatLng(latitude[i],logitude[i]))
-                                        .title(name[i]);
-                                mMap.addMarker(markerOptions);
+                            for(int i =0; i< latitude.length; i++) {
+                                if( latitude[i] != null) {
+                                    MarkerOptions markerOptions = new MarkerOptions();
+                                    markerOptions
+                                            .position(new LatLng(latitude[i], logitude[i]))
+                                            .title(name[i]);
+                                    mMap.addMarker(markerOptions);
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -160,6 +176,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                     @Override
                     public void onClick(View view) {
+                        mMap.clear();
                         try {
                             JSONObject jsonObject = new JSONObject(result);
                             JSONArray data = jsonObject.getJSONArray("results");
@@ -171,7 +188,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             System.out.println(data.length());
                             for(int i=0; i < data.length(); i++) {
                                 JSONObject object = data.getJSONObject(i);
-                                String type = object.getString("categoty");
+                                String type = object.getString("category");
                                 if( type.equals("R")) {
                                     latitude[i] = object.getDouble("addr_y");
                                     logitude[i] = object.getDouble("addr_x");
@@ -179,12 +196,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     name[i] = object.getString("title");
                                 }
                             }
-                            for(int i =0; i< data.length(); i++) {
-                                MarkerOptions markerOptions = new MarkerOptions();
-                                markerOptions
-                                        .position(new LatLng(latitude[i],logitude[i]))
-                                        .title(name[i]);
-                                mMap.addMarker(markerOptions);
+                            for(int i =0; i< latitude.length; i++) {
+                                if( latitude[i] != null) {
+                                    MarkerOptions markerOptions = new MarkerOptions();
+                                    markerOptions
+                                            .position(new LatLng(latitude[i], logitude[i]))
+                                            .title(name[i]);
+                                    mMap.addMarker(markerOptions);
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -197,6 +216,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 new Button.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        mMap.clear();
                         try {
                             JSONObject jsonObject = new JSONObject(result);
                             JSONArray data = jsonObject.getJSONArray("results");
@@ -208,7 +228,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             System.out.println(data.length());
                             for(int i=0; i < data.length(); i++) {
                                 JSONObject object = data.getJSONObject(i);
-                                String type = object.getString("categoty");
+                                String type = object.getString("category");
+
                                 if( type.equals("C")) {
                                     latitude[i] = object.getDouble("addr_y");
                                     logitude[i] = object.getDouble("addr_x");
@@ -216,12 +237,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     name[i] = object.getString("title");
                                 }
                             }
-                            for(int i =0; i< data.length(); i++) {
-                                MarkerOptions markerOptions = new MarkerOptions();
-                                markerOptions
-                                        .position(new LatLng(latitude[i],logitude[i]))
-                                        .title(name[i]);
-                                mMap.addMarker(markerOptions);
+                            for(int i =0; i< latitude.length; i++) {
+                                if(latitude[i] != null) {
+                                    MarkerOptions markerOptions = new MarkerOptions();
+                                    markerOptions
+                                            .position(new LatLng(latitude[i], logitude[i]))
+                                            .title(name[i]);
+                                    mMap.addMarker(markerOptions);
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -297,7 +320,46 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     mMap.addMarker(new MarkerOptions()
                             .position(myLocation)
                             .title("현재 위치"));
+                    mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                        @Override
+                        public void onInfoWindowClick(Marker marker) {
+                            String title = marker.getTitle();
+                            String thumbnail,comment,type=null;
+                            Intent intent=null;
+                            try {
+                                JSONObject jsonObject = new JSONObject(result);
+                                JSONArray data = jsonObject.getJSONArray("results");
+                                for(int i=0; i < data.length(); i++) {
+                                    JSONObject object = data.getJSONObject(i);
+                                    String temp = object.getString("title");
+                                    if( title.equals(temp)) {
+                                        thumbnail = object.getString("picture_thumbnail");
+                                        comment = object.getString("comment");
+                                        type = object.getString("category");
+                                        break;
+                                    }
+                                }
+                                if(type.equals("R")) {
+                                    intent = new Intent(MainActivity.this, RestaurantActivity.class);
+                                }
+                                else if(type.equals("C")){
+                                    intent = new Intent(MainActivity.this, CafeActivity.class);
+                                }
+                                else if( type.equals("P")) {
+                                    intent = new Intent(MainActivity.this, BarActivity.class);
+                                }
+                                else if( type.equals("H")) {
+                                    intent = new Intent(MainActivity.this, HiddenSpotActivity.class);
+                                }
 
+                                startActivity(intent);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    });
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
 
 
@@ -327,6 +389,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         NetworkTask networkTask = new NetworkTask(api_url+"spots/", null);
         networkTask.execute();
     }
+
+    public void Goto(View view) {
+        Intent intent = new Intent(MainActivity.this, BarActivity.class);
+        startActivity(intent);
+    }
+
 
     public class NetworkTask extends AsyncTask<Void, Void, String> {
 
@@ -441,7 +509,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
             try {
-                ;
+
                 MultipartUtility multipart = new MultipartUtility("http://172.16.17.14:8000/api/stories/", "UTF-8");
                 multipart.addFormField("spot",String.valueOf(this.spot_id));
                 multipart.addFormField("content",this.content);

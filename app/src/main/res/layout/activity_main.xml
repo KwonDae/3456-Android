@@ -23,15 +23,16 @@
             android:layout_height="match_parent" />
 
         <Button
-            android:id="@+id/button"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_margin="40dp"
+        android:id="@+id/addbutton"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginLeft="290dp"
+            android:layout_marginTop="400dp"
+            android:onClick="Goto"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/addbutton3"/>
 
-            android:onClick="onLastLocationButtonClicked"
-            android:text="현재 위치"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/restaurant"
@@ -66,6 +67,15 @@
             android:layout_marginLeft="280dp"
             android:layout_marginTop="500dp"
             />
+
+        <Button
+            android:id="@+id/current"
+            android:layout_marginLeft="285dp"
+            android:layout_marginTop="310dp"
+            android:onClick="onLastLocationButtonClicked"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/current" />
 
     </FrameLayout>
 

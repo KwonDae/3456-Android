@@ -3,7 +3,7 @@ package com.example.daewon.urscampusmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-public class BarActivity extends AppCompatActivity {
+public class BarActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
